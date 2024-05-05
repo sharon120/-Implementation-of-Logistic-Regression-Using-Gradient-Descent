@@ -8,87 +8,112 @@ To write a program to implement the the Logistic Regression Using Gradient Desce
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-STEP 1: Use the standard libraries in python for finding linear regression.
-
-STEP 2: Set variables for assigning dataset values
-
-STEP 3: Import linear regression from sklearn.
-
-STEP 4: Predict the values of array
-
-STEP 5: Calculate the accuracy, confusion and classification report by importing the required modules from sklearn.
+1.Import the required libraries.
+2.Load the dataset.
+3.Define X and Y array.
+4.Define a function for costFunction,cost and gradient.
+5.Define a function to plot the decision boundary.
 
 ## Program:
 ```
 /*
 Program to implement the the Logistic Regression Using Gradient Descent.
 Developed by: Sharon Harshini L M
-RegisterNumber: 212223040193
+RegisterNumber:  212223040193
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-data=pd.read_csv(r'Mall_Customers.csv')
+dataset=pd.read_csv('Placement_Data.csv')
+dataset
+dataset= dataset.drop('sl_no',axis=1)
+dataset=dataset.drop('salary',axis=1)
+dataset["gender"]=dataset["gender"].astype('category')
+dataset["ssc_b"]=dataset["ssc_b"].astype('category')
+dataset["hsc_b"]=dataset["hsc_b"].astype('category')
+dataset["degree_t"]=dataset["degree_t"].astype('category')
+dataset["workex"]=dataset["workex"].astype('category')
+dataset["specialisation"]=dataset["specialisation"].astype('category')
+dataset["status"]=dataset["status"].astype('category')
+dataset["hsc_s"]=dataset["hsc_s"].astype('category')
+dataset.dtypes
+dataset["gender"]=dataset["gender"].cat.codes
+dataset["ssc_b"]=dataset["ssc_b"].cat.codes
+dataset["hsc_b"]=dataset["hsc_b"].cat.codes
+dataset["degree_t"]=dataset["degree_t"].cat.codes
+dataset["workex"]=dataset["workex"].cat.codes
+dataset["specialisation"]=dataset["specialisation"].cat.codes
+dataset["status"]=dataset["status"].cat.codes
+dataset["hsc_s"]=dataset["hsc_s"].cat.codes
+dataset
+X=dataset.iloc[:,:-1].values
+Y=dataset.iloc[:,-1].values
+Y
+theta=np.random.randn(X.shape[1])
+y=Y
+def sigmoid(z):
+    return 1/(1+np.exp(-z))
+def loss(theta, X, y ):
+    h = sigmoid(X.dot(theta)) 
+    return -np.sum(y *np.log(h)+ (1- y) *np.log(1-h))
+def gradient_descent(theta, x, y, alpha, num_iterations):
+    m = len(y)
+    for i in range(num_iterations):
+        h=sigmoid(X.dot(theta))
+        gradient=X.T.dot (h-y) /m
+        theta-=alpha * gradient
+    return theta
+theta= gradient_descent (theta,X,y,alpha=0.01, num_iterations=1000)
+def predict(theta, X):
+    h=sigmoid(X.dot(theta))
+    y_pred=np.where( h >= 0.5,1 , 0)
+    return y_pred
 
-data.head()
-data.info()
-data.isnull().sum()
-
-from sklearn.cluster import KMeans
-wcss = []
-for i in range(1,11):
-    kmeans = KMeans(n_clusters = i,init = "k-means++")
-    kmeans.fit(data.iloc[:,3:])
-    wcss.append(kmeans.inertia_)
-plt.plot(range(1,11),wcss)
-plt.xlabel("No. of Clusters")
-plt.ylabel("wcss")
-plt.title("Elbow Method")
-
-km = KMeans(n_clusters = 5)
-km.fit(data.iloc[:,3:])
-
-y_pred = km.predict(data.iloc[:,3:])
-y_pred
-
-data["cluster"] = y_pred
-df0 = data[data["cluster"]==0]
-df1 = data[data["cluster"]==1]
-df2 = data[data["cluster"]==2]
-df3 = data[data["cluster"]==3]
-df4 = data[data["cluster"]==4]
-plt.scatter(df0["Annual Income (k$)"],df0["Spending Score (1-100)"],c="red",label="cluster0")
-plt.scatter(df1["Annual Income (k$)"],df1["Spending Score (1-100)"],c="black",label="cluster1")
-plt.scatter(df2["Annual Income (k$)"],df2["Spending Score (1-100)"],c="blue",label="cluster2")
-plt.scatter(df3["Annual Income (k$)"],df3["Spending Score (1-100)"],c="green",label="cluster3")
-plt.scatter(df4["Annual Income (k$)"],df4["Spending Score (1-100)"],c="magenta",label="cluster4")
-plt.legend()
-plt.title("Customer Segments")
-
-*/
+y_pred= predict(theta,X)
+accuracy = np.mean(y_pred.flatten()==y) 
+print("Accuracy:", accuracy)
+print(Y)
+print(y_pred)
+xnew=np.array([[0,87,0,95,0,2,78,2,0,0,1,0]])
+y_prednew=predict(theta,xnew)
+print(y_prednew)
+xnew=np.array([[0,0,0,0,0,2,8,2,0,0,1,0]])
+y_prednew=predict(theta,xnew)
+print(y_prednew)
 ```
 
 ## Output:
-Head()
+DATASET:
 
-![325059598-b456b834-cd05-4854-ae81-9bdfed9b3c6a](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/d739863b-393f-4a50-be8f-c55e0c10a66b)
-Info()
+![326230954-37f57e48-ca78-414a-8602-ba1732d1d449](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/864060b7-5a1f-418b-918d-e758030c2877)
 
-![325059830-e57cb1e9-621e-46e2-83bb-b4886f663fa8](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/3d5a59c7-d617-43da-9658-f68ce2456e09)
-isnull.sum()
+LABELLING DATA:
 
-![325060452-c3e12196-8ca0-40c6-bdfe-e9a30411566c](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/430d995f-744f-4b60-8996-428f9fe985d8)
-Elbow method
+![326230987-43d27412-c749-4776-babf-fb7a4098d924](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/bdd37ed4-5e58-4725-9d93-9a9d59655d63)
 
-![325060077-75bcf084-8bd2-425d-ac42-72ae8b6b4870](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/4ecf2b3f-6427-444d-9ea5-d1f52d0dff5a)
-Fitting the no of clusters
+LABELLING THE COLUMN:
 
-![325060182-a6d6d758-7171-479b-9d41-6a7d23000f07](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/ab483e14-15cb-4159-bf34-e0bc60ddba36)
-Prediction of Y
+![326231009-921e5ebe-e913-421a-afc6-9c5dfb637ce9](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/8500eb23-3eb5-4572-ab34-48bdf8da893d)
 
-![325060267-7582d183-b350-4875-b532-39cab3dcc4cb](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/9934a8ac-90c1-4bb1-9af5-1f26e8d03134)
-Customer Segments
+DEPENDENT VARIABLES:
 
-![325060545-3e08df8f-5472-4583-aeef-3019bf0b9f85](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/67874183-f6cc-4334-a9fb-f0462be9f7d7)
+![326231032-167f9a29-cd37-4d88-93a3-75db61629bab](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/fb1cc7fe-4aac-41a5-a91f-c3671b58c8c1)
+
+ACCURACY:
+
+![326231082-7dc8c795-1068-4811-9bc3-31c0135670b3](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/01b3bbf8-d1b1-464c-9308-5e5c7721adb6)
+
+Y:
+
+![326231098-00a9d0da-d3c7-478a-a244-365579b0c59f](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/794f863b-5bab-4ac7-86f1-ddb20ba485b5)
+
+Y_PRED:
+
+![326231105-a2a0216f-a843-4f2e-ad18-ff190132e9a9](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/8ed2082c-e7a7-4c6f-b026-df1bd4a7ed3c)
+
+NEW PREDICTED DATA:
+
+![326231136-34787685-822b-4740-92ed-28275ebf2c18](https://github.com/sharon120/-Implementation-of-Logistic-Regression-Using-Gradient-Descent/assets/149555539/32be41b3-d621-456e-883f-3c8cf0e3a7f1)
 
 ## Result:
 Thus the program to implement the the Logistic Regression Using Gradient Descent is written and verified using python programming.
